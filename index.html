@@ -93,10 +93,11 @@ async function extractPdf(file){
  let lines=[];
  for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p);const content=await page.getTextContent();let items=content.items.filter(x=>x.str&&x.str.trim());items.sort((a,b)=>Math.abs(b.transform[5]-a.transform[5])>2?b.transform[5]-a.transform[5]:a.transform[4]-b.transform[4]);let rowY=null,row=[];for(const it of items){let y=Math.round(it.transform[5]);if(rowY!==null&&Math.abs(y-rowY)>2){lines.push(row.join(" ").replace(/\s+/g," ").trim());row=[]}row.push(it.str);rowY=y}if(row.length)lines.push(row.join(" ").replace(/\s+/g," ").trim())}
  const text=lines.join("\n");
- // Each numbered table row starts with an entry number. The definition may wrap onto following rows.
- const starts=[...text.matchAll(/(?:^|\n)\s*(\d{1,3})\.\s+/g)];
+ // Detect numbered entries even when PDF.js places several table rows on one extracted line.
+ // Some PDF text items put a space before the period (for example, "30 . easy"), so allow it.
+ const starts=[...text.matchAll(/\b(\d{1,3})\s*\.\s+/g)];
  let out=[];
- for(let i=0;i<starts.length;i++){const n=+starts[i][1];if(n<1||n>450)continue;const begin=starts[i].index+(text.slice(starts[i].index).startsWith("\n")?1:0);const end=i+1<starts.length?starts[i+1].index:text.length;let block=text.slice(begin,end).replace(/^\s*\d{1,3}\.\s+/,"").replace(/\s+/g," ").trim();
+ for(let i=0;i<starts.length;i++){const n=+starts[i][1];if(n<1||n>450)continue;const begin=starts[i].index;const end=i+1<starts.length?starts[i+1].index:text.length;let block=text.slice(begin,end).replace(/^\s*\d{1,3}\s*\.\s+/,"").replace(/\s+/g," ").trim();
  block=block.replace(/This is copyrighted material.*$/i,"").replace(/Download the Word Club.*$/i,"").replace(/Create a free account.*$/i,"").replace(/Official Dictionary.*$/i,"").trim();
  const posMatch=block.match(/\b(plural noun|geographical entry|adjective|adverb|preposition|interjection|noun|verb)\b/i);if(!posMatch)continue;
  const pos=posMatch[0];const at=posMatch.index;const word=block.slice(0,at).trim().replace(/\s+(OR|or)\s+.*$/,"").replace(/\*+/g,"").trim();let definition=block.slice(at+pos.length).trim().replace(/^\s*[-—:]\s*/,"");
