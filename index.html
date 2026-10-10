@@ -74,7 +74,7 @@
 <script>
 const EXPECTED_SHA256="8ebc528289acfdec7ba2ffd318270aa2e0e0c1a0aa883cdc27f0ce257957f6c5";
 if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-let words=[],level=1,questions=[],qi=0,correct=0,missed=[],answered=false;
+let words=[],level=1,questions=[],qi=0,correct=0,missed=[],answered=false,nextCountdownTimer=null;
 const PROGRESS_KEY="spellingBeeUnlockedLevel_v1";
 function readUnlockedLevel(){
  try {
@@ -198,9 +198,23 @@ async function celebrateSpelling(word){
   speakSpelling(word);
 }
 function startQuiz(){questions=levelWords().slice().sort(()=>Math.random()-.5).slice(0,10);qi=0;correct=0;missed=[];$("results").classList.add("hidden");$("studyPanel").classList.add("hidden");$("quizPanel").classList.remove("hidden");$("quizLevel").textContent="LEVEL "+level;showQ()}
-function showQ(){if(qi>=questions.length){finish();return}answered=false;let w=questions[qi];$("qCount").textContent=`Question ${qi+1} of 10`;$("progress").style.width=(qi/10*100)+"%";$("definition").textContent=w.definition;$("pos").textContent=`${w.pos} · Study-list word #${w.n}`;$("answer").value="";$("answer").disabled=false;$("checkBtn").classList.remove("hidden");$("nextBtn").classList.add("hidden");$("feedback").classList.add("hidden");$("score").textContent=`Score: ${correct} correct`; }
-$("answerForm").onsubmit=e=>{e.preventDefault();if(answered)return;answered=true;let w=questions[qi],ok=$("answer").value.trim().toLowerCase()===w.word.trim().toLowerCase();if(ok){correct++;celebrateSpelling(w.word)}else missed.push(w);$("answer").disabled=true;$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("progress").style.width=((qi+1)/10*100)+"%";$("feedback").className="status "+(ok?"good":"bad");$("feedback").textContent=ok?"Correct! "+w.word:"Correct spelling: "+w.word;$("score").textContent=`Score: ${correct} correct`};
-$("nextBtn").onclick=()=>{qi++;showQ()};$("hearBtn").onclick=()=>speak(questions[qi]?.word||"");function finish(){
+function showQ(){if(nextCountdownTimer!==null){clearInterval(nextCountdownTimer);nextCountdownTimer=null}if(qi>=questions.length){finish();return}answered=false;let w=questions[qi];$("qCount").textContent=`Question ${qi+1} of 10`;$("progress").style.width=(qi/10*100)+"%";$("definition").textContent=w.definition;$("pos").textContent=`${w.pos} · Study-list word #${w.n}`;$("answer").value="";$("answer").disabled=false;$("checkBtn").classList.remove("hidden");$("nextBtn").classList.add("hidden");$("feedback").classList.add("hidden");$("score").textContent=`Score: ${correct} correct`; }
+function startNextWordCountdown(){
+ if(nextCountdownTimer!==null)clearInterval(nextCountdownTimer);
+ let seconds=5;
+ const button=$("nextBtn");
+ button.textContent=`Next word in ${seconds}…`;
+ nextCountdownTimer=setInterval(()=>{
+  seconds--;
+  if(seconds>0){button.textContent=`Next word in ${seconds}…`;return;}
+  clearInterval(nextCountdownTimer);
+  nextCountdownTimer=null;
+  button.textContent="Next word →";
+  button.click();
+ },1000);
+}
+$("answerForm").onsubmit=e=>{e.preventDefault();if(answered)return;answered=true;let w=questions[qi],ok=$("answer").value.trim().toLowerCase()===w.word.trim().toLowerCase();if(ok){correct++;celebrateSpelling(w.word)}else missed.push(w);$("answer").disabled=true;$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("progress").style.width=((qi+1)/10*100)+"%";$("feedback").className="status "+(ok?"good":"bad");$("feedback").textContent=ok?"Correct! "+w.word:"Correct spelling: "+w.word;$("score").textContent=`Score: ${correct} correct`;startNextWordCountdown()};
+$("nextBtn").onclick=()=>{if(nextCountdownTimer!==null){clearInterval(nextCountdownTimer);nextCountdownTimer=null}$("nextBtn").textContent="Next word →";qi++;showQ()};$("hearBtn").onclick=()=>speak(questions[qi]?.word||"");function finish(){
  $("quizPanel").classList.add("hidden");$("results").classList.remove("hidden");
  $("certificatePanel").classList.add("hidden");
  const perfect=correct===10;
