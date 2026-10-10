@@ -47,9 +47,68 @@ function selectLevel(n){level=n;renderLevels();$("levelTitle").textContent=`Leve
 function levelWords(){return words.filter(w=>w.n>=(level-1)*45+1&&w.n<=level*45)}
 $("verifyBtn").onclick=async()=>{const file=$("pdfFile").files[0];if(!file){status("Please choose the original study-list PDF first.",false);return} $("verifyBtn").disabled=true;$("verifyBtn").textContent="Checking PDF…";try{const hash=await sha256(file);if(hash!==EXPECTED_SHA256)throw Error("This is not the exact PDF configured for this app. Please select the original file.");words=await extractPdf(file);$("practice").classList.remove("hidden");status(`PDF verified. ${words.length} words were read locally. Practice is unlocked!`,true);selectLevel(1)}catch(e){status(e.message||"Could not read this PDF.",false)}finally{$("verifyBtn").disabled=false;$("verifyBtn").textContent="Verify PDF and unlock"}};
 function speak(s){if(!("speechSynthesis"in window)){alert("Audio pronunciation is unavailable in this browser.");return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(s);u.lang="en-US";u.rate=.8;speechSynthesis.speak(u)}
+// Reward correct answers with a short coin-like sound, then spell the word aloud.
+async function playCoinReward(){
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+  let context;
+  try {
+    context = new AudioContextClass();
+    await context.resume();
+    const start = context.currentTime;
+    [1046.5, 1568, 2093].forEach((frequency, index) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      const when = start + index * 0.13;
+      oscillator.type = "triangle";
+      oscillator.frequency.setValueAtTime(frequency, when);
+      gain.gain.setValueAtTime(0.0001, when);
+      gain.gain.exponentialRampToValueAtTime(0.16, when + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, when + 0.12);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(when);
+      oscillator.stop(when + 0.13);
+    });
+    await new Promise(resolve => setTimeout(resolve, 600));
+  } catch (error) {
+    console.warn("Reward sound could not play:", error);
+  } finally {
+    if (context && context.state !== "closed") {
+      try { await context.close(); } catch (_) {}
+    }
+  }
+}
+function speakSpelling(word){
+  if (!("speechSynthesis" in window)) return;
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  synth.resume();
+  const letterNames = {
+    A:"ay", B:"bee", C:"see", D:"dee", E:"ee", F:"ef", G:"jee",
+    H:"aych", I:"eye", J:"jay", K:"kay", L:"el", M:"em", N:"en",
+    O:"oh", P:"pee", Q:"cue", R:"are", S:"ess", T:"tee", U:"you",
+    V:"vee", W:"double you", X:"ex", Y:"why", Z:"zee"
+  };
+  const spelled = [...word.toUpperCase()]
+    .map(letter => letterNames[letter] || letter)
+    .join(". ") + ".";
+  const lettersUtterance = new SpeechSynthesisUtterance(spelled);
+  lettersUtterance.lang = "en-US";
+  lettersUtterance.rate = 0.78;
+  const wordUtterance = new SpeechSynthesisUtterance(word + "!");
+  wordUtterance.lang = "en-US";
+  wordUtterance.rate = 0.82;
+  synth.speak(lettersUtterance);
+  synth.speak(wordUtterance);
+}
+async function celebrateSpelling(word){
+  await playCoinReward();
+  speakSpelling(word);
+}
 function startQuiz(){questions=levelWords().slice().sort(()=>Math.random()-.5).slice(0,10);qi=0;correct=0;missed=[];$("results").classList.add("hidden");$("studyPanel").classList.add("hidden");$("quizPanel").classList.remove("hidden");$("quizLevel").textContent="LEVEL "+level;showQ()}
 function showQ(){if(qi>=questions.length){finish();return}answered=false;let w=questions[qi];$("qCount").textContent=`Question ${qi+1} of 10`;$("progress").style.width=(qi/10*100)+"%";$("definition").textContent=w.definition;$("pos").textContent=`${w.pos} · Study-list word #${w.n}`;$("answer").value="";$("answer").disabled=false;$("checkBtn").classList.remove("hidden");$("nextBtn").classList.add("hidden");$("feedback").classList.add("hidden");$("score").textContent=`Score: ${correct} correct`; }
-$("answerForm").onsubmit=e=>{e.preventDefault();if(answered)return;answered=true;let w=questions[qi],ok=$("answer").value.trim().toLowerCase()===w.word.trim().toLowerCase();if(ok)correct++;else missed.push(w);$("answer").disabled=true;$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("progress").style.width=((qi+1)/10*100)+"%";$("feedback").className="status "+(ok?"good":"bad");$("feedback").textContent=ok?"Correct! "+w.word:"Correct spelling: "+w.word;$("score").textContent=`Score: ${correct} correct`};
+$("answerForm").onsubmit=e=>{e.preventDefault();if(answered)return;answered=true;let w=questions[qi],ok=$("answer").value.trim().toLowerCase()===w.word.trim().toLowerCase();if(ok){correct++;celebrateSpelling(w.word)}else missed.push(w);$("answer").disabled=true;$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("progress").style.width=((qi+1)/10*100)+"%";$("feedback").className="status "+(ok?"good":"bad");$("feedback").textContent=ok?"Correct! "+w.word:"Correct spelling: "+w.word;$("score").textContent=`Score: ${correct} correct`};
 $("nextBtn").onclick=()=>{qi++;showQ()};$("hearBtn").onclick=()=>speak(questions[qi]?.word||"");function finish(){$("quizPanel").classList.add("hidden");$("results").classList.remove("hidden");$("resultTitle").textContent=correct===10?"Perfect score! 🐝":"Quiz complete";$("resultText").textContent=`You got ${correct}/10 correct (${correct*10}%). Review these words and try again.`;$("missed").innerHTML=missed.map(w=>`<div class="question"><b>${w.word}</b><div class="muted">${w.definition}</div></div>`).join("")||"All correct—excellent work!"}
 $("startBtn").onclick=startQuiz;$("retryBtn").onclick=startQuiz;
 function showStudy(list) {
