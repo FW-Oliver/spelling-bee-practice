@@ -91,17 +91,72 @@ async function extractPdf(file){
  if(!window.pdfjsLib)throw Error("The PDF reader library did not load. Check your internet connection and reload the page.");
  const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
  let lines=[];
- for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p);const content=await page.getTextContent();let items=content.items.filter(x=>x.str&&x.str.trim());items.sort((a,b)=>Math.abs(b.transform[5]-a.transform[5])>2?b.transform[5]-a.transform[5]:a.transform[4]-b.transform[4]);let rowY=null,row=[];for(const it of items){let y=Math.round(it.transform[5]);if(rowY!==null&&Math.abs(y-rowY)>2){lines.push(row.join(" ").replace(/\s+/g," ").trim());row=[]}row.push(it.str);rowY=y}if(row.length)lines.push(row.join(" ").replace(/\s+/g," ").trim())}
+ for(let p=1;p<=pdf.numPages;p++){
+  const page=await pdf.getPage(p);
+  const content=await page.getTextContent();
+  let items=content.items.filter(x=>x.str&&x.str.trim());
+  items.sort((a,b)=>Math.abs(b.transform[5]-a.transform[5])>2?b.transform[5]-a.transform[5]:a.transform[4]-b.transform[4]);
+  let rowY=null,row=[];
+  for(const it of items){
+   let y=Math.round(it.transform[5]);
+   if(rowY!==null&&Math.abs(y-rowY)>2){lines.push(row.join(" ").replace(/\s+/g," ").trim());row=[]}
+   row.push(it.str);rowY=y;
+  }
+  if(row.length)lines.push(row.join(" ").replace(/\s+/g," ").trim());
+ }
  const text=lines.join("\n");
- // Detect numbered entries even when PDF.js places several table rows on one extracted line.
- // Some PDF text items put a space before the period (for example, "30 . easy"), so allow it.
+ // Entry numbers can appear on the same extracted line as the previous table row.
  const starts=[...text.matchAll(/\b(\d{1,3})\s*\.\s+/g)];
  let out=[];
- for(let i=0;i<starts.length;i++){const n=+starts[i][1];if(n<1||n>450)continue;const begin=starts[i].index;const end=i+1<starts.length?starts[i+1].index:text.length;let block=text.slice(begin,end).replace(/^\s*\d{1,3}\s*\.\s+/,"").replace(/\s+/g," ").trim();
- block=block.replace(/This is copyrighted material.*$/i,"").replace(/Download the Word Club.*$/i,"").replace(/Create a free account.*$/i,"").replace(/Official Dictionary.*$/i,"").trim();
- const posMatch=block.match(/\b(plural noun|geographical entry|adjective|adverb|preposition|interjection|noun|verb)\b/i);if(!posMatch)continue;
- const pos=posMatch[0];const at=posMatch.index;const word=block.slice(0,at).trim().replace(/\s+(OR|or)\s+.*$/,"").replace(/\*+/g,"").trim();let definition=block.slice(at+pos.length).trim().replace(/^\s*[-—:]\s*/,"");
- if(word&&definition&&/^[A-Za-zÀ-ÿñÑ'’ -]+$/.test(word))out.push({n,word,pos,definition});
+ for(let i=0;i<starts.length;i++){
+  const n=+starts[i][1];
+  if(n<1||n>450)continue;
+  const begin=starts[i].index;
+  const end=i+1<starts.length?starts[i+1].index:text.length;
+  let block=text.slice(begin,end).replace(/^\s*\d{1,3}\s*\.\s+/,"").replace(/\s+/g," ").trim();
+
+  // Remove page furniture and explanatory footnotes that may follow the last entry on a page.
+  block=block
+   .replace(/This is copyrighted material.*$/i,"")
+   .replace(/Download the Word Club.*$/i,"")
+   .replace(/Create a free account.*$/i,"")
+   .replace(/Official Dictionary.*$/i,"")
+   .replace(/\s+\*(?:British|American|US|U\.S\.) spelling\b.*$/i,"")
+   .replace(/\s+\*?Copyrighted material.*$/i,"")
+   .trim();
+
+  const posMatch=block.match(/\b(plural noun|geographical entry|adjective|adverb|preposition|interjection|noun|verb)\b/i);
+  if(!posMatch)continue;
+  const pos=posMatch[0];
+  const at=posMatch.index;
+  let wordColumn=block.slice(0,at).trim();
+  const definitionStart=block.slice(at+pos.length).trim().replace(/^\s*[-—:]\s*/,"");
+  let word=wordColumn.replace(/\s+\bOR\b\s+.*$/i,"").replace(/\*+/g,"").trim();
+  let answers=[word];
+  const wordAlt=wordColumn.match(/\s+\bOR\b\s+([A-Za-zÀ-ÿñÑ'’ -]+)\*?\s*$/i);
+  if(wordAlt)answers.push(wordAlt[1].trim().replace(/\*+$/,""));
+
+  let definition=definitionStart;
+  // In some PDF.js text orderings, the alternative spelling is appended to the definition instead.
+  const definitionAlt=definition.match(/\s+\bOR\b\s+([A-Za-zÀ-ÿñÑ'’ -]+)\*?\s*$/i);
+  if(definitionAlt){
+   answers.push(definitionAlt[1].trim().replace(/\*+$/,""));
+   definition=definition.slice(0,definitionAlt.index).trim();
+  }
+  // Strip footnote markers accidentally carried over from the next page or footer.
+  definition=definition
+   .replace(/\s+\*(?:British|American|US|U\.S\.) spelling\b.*$/i,"")
+   .replace(/\s+This is copyrighted material.*$/i,"")
+   .replace(/\s+Download the Word Club.*$/i,"")
+   .replace(/\s+Create a free account.*$/i,"")
+   .trim()
+   .replace(/\*+$/,"")
+   .trim();
+
+  answers=[...new Set(answers.map(a=>a.trim()).filter(Boolean))];
+  if(word&&definition&&/^[A-Za-zÀ-ÿñÑ'’ -]+$/.test(word)){
+   out.push({n,word,pos,definition,answers});
+  }
  }
  const unique=[...new Map(out.map(w=>[w.n,w])).values()].sort((a,b)=>a.n-b.n);
  if(unique.length<400)throw Error("The PDF was recognized, but the browser could only extract "+unique.length+" entries. This PDF layout needs a parser adjustment before practice can start.");
@@ -214,7 +269,7 @@ function startNextWordCountdown(){
   button.click();
  },1000);
 }
-$("answerForm").onsubmit=e=>{e.preventDefault();if(answered)return;answered=true;let w=questions[qi],ok=$("answer").value.trim().toLowerCase()===w.word.trim().toLowerCase();if(ok){correct++;celebrateSpelling(w.word)}else missed.push(w);$("answer").disabled=true;$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("progress").style.width=((qi+1)/10*100)+"%";$("feedback").className="status "+(ok?"good":"bad");$("feedback").textContent=ok?"Correct! "+w.word:"Correct spelling: "+w.word;$("score").textContent=`Score: ${correct} correct`;startNextWordCountdown()};
+$("answerForm").onsubmit=e=>{e.preventDefault();if(answered)return;answered=true;let w=questions[qi],submitted=$("answer").value.trim().toLocaleLowerCase(),accepted=(w.answers||[w.word]).map(a=>a.trim().toLocaleLowerCase()),ok=accepted.includes(submitted);if(ok){correct++;celebrateSpelling(w.word)}else missed.push(w);$("answer").disabled=true;$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("progress").style.width=((qi+1)/10*100)+"%";$("feedback").className="status "+(ok?"good":"bad");$("feedback").textContent=ok?"Correct! "+w.word:"Correct spelling: "+w.word;$("score").textContent=`Score: ${correct} correct`;startNextWordCountdown()};
 $("nextBtn").onclick=()=>{if(nextCountdownTimer!==null){clearInterval(nextCountdownTimer);nextCountdownTimer=null}$("nextBtn").textContent="Next word →";qi++;showQ()};$("hearBtn").onclick=()=>speak(questions[qi]?.word||"");function finish(){
  $("quizPanel").classList.add("hidden");$("results").classList.remove("hidden");
  $("proceedBtn").classList.add("hidden");
@@ -274,7 +329,7 @@ function showStudy(list) {
   studyList.innerHTML = list.map(w => `
     <div class="question">
       <div class="row between">
-        <b>${w.n}. ${w.word}</b>
+        <b>${w.n}. ${w.word}${(w.answers||[]).length>1?` (also ${(w.answers||[]).filter(a=>a.toLowerCase()!==w.word.toLowerCase()).join(", ")})`:""}</b>
         <button class="btn secondary" type="button" data-hear-word="${w.n}">🔊 Hear</button>
       </div>
       <div class="muted">${w.pos} · ${w.definition}</div>
