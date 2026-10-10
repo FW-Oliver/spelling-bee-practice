@@ -131,18 +131,45 @@ async function extractPdf(file){
   const at=posMatch.index;
   let wordColumn=block.slice(0,at).trim();
   const definitionStart=block.slice(at+pos.length).trim().replace(/^\s*[-—:]\s*/,"");
+  // Alternative spellings normally belong to the word column, but PDF.js can
+  // insert them into the definition column when it reads the table out of order.
   let word=wordColumn.replace(/\s+\bOR\b\s+.*$/i,"").replace(/\*+/g,"").trim();
   let answers=[word];
-  const wordAlt=wordColumn.match(/\s+\bOR\b\s+([A-Za-zÀ-ÿñÑ'’ -]+)\*?\s*$/i);
+  const wordAlt=wordColumn.match(/\s+\bOR\b\s+([A-Za-zÀ-ÿñÑ'’]+)\*?\s*$/i);
   if(wordAlt)answers.push(wordAlt[1].trim().replace(/\*+$/,""));
 
   let definition=definitionStart;
-  // In some PDF.js text orderings, the alternative spelling is appended to the definition instead.
-  const definitionAlt=definition.match(/\s+\bOR\b\s+([A-Za-zÀ-ÿñÑ'’ -]+)\*?\s*$/i);
-  if(definitionAlt){
-   answers.push(definitionAlt[1].trim().replace(/\*+$/,""));
-   definition=definition.slice(0,definitionAlt.index).trim();
+  // Only treat a word following OR as an alternative if it closely matches
+  // the actual entry word. This avoids mistaking ordinary definition text
+  // such as “the OR source of heat” for an alternative spelling.
+  function spellingDistance(a,b){
+   a=a.toLocaleLowerCase(); b=b.toLocaleLowerCase();
+   const row=Array.from({length:b.length+1},(_,i)=>i);
+   for(let i=1;i<=a.length;i++){
+    let prev=row[0]; row[0]=i;
+    for(let j=1;j<=b.length;j++){
+     const old=row[j];
+     row[j]=Math.min(row[j]+1,row[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));
+     prev=old;
+    }
+   }
+   return row[b.length];
   }
+  const orMatches=[...definition.matchAll(/\bOR\s+([A-Za-zÀ-ÿñÑ'’]+)\*?/gi)];
+  for(const match of orMatches){
+   const candidate=match[1].replace(/\*+$/,"" );
+   const normalizedWord=word.toLocaleLowerCase();
+   const normalizedCandidate=candidate.toLocaleLowerCase();
+   if(candidate && normalizedCandidate!==normalizedWord &&
+      Math.abs(candidate.length-word.length)<=2 &&
+      spellingDistance(word,candidate)<=2){
+    answers.push(candidate);
+    definition=definition.slice(0,match.index)+definition.slice(match.index).replace(/^\bOR\s+[A-Za-zÀ-ÿñÑ'’]+\*?/i,"");
+    break;
+   }
+  }
+  // If the alternative spelling was appended at the very end of the definition,
+  // the matching logic above removes only that alternative, leaving the definition intact.
   // Strip footnote markers accidentally carried over from the next page or footer.
   definition=definition
    .replace(/\s+\*(?:British|American|US|U\.S\.) spelling\b.*$/i,"")
