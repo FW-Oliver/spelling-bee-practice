@@ -52,6 +52,26 @@ function showQ(){if(qi>=questions.length){finish();return}answered=false;let w=q
 $("answerForm").onsubmit=e=>{e.preventDefault();if(answered)return;answered=true;let w=questions[qi],ok=$("answer").value.trim().toLowerCase()===w.word.trim().toLowerCase();if(ok)correct++;else missed.push(w);$("answer").disabled=true;$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("progress").style.width=((qi+1)/10*100)+"%";$("feedback").className="status "+(ok?"good":"bad");$("feedback").textContent=ok?"Correct! "+w.word:"Correct spelling: "+w.word;$("score").textContent=`Score: ${correct} correct`};
 $("nextBtn").onclick=()=>{qi++;showQ()};$("hearBtn").onclick=()=>speak(questions[qi]?.word||"");function finish(){$("quizPanel").classList.add("hidden");$("results").classList.remove("hidden");$("resultTitle").textContent=correct===10?"Perfect score! 🐝":"Quiz complete";$("resultText").textContent=`You got ${correct}/10 correct (${correct*10}%). Review these words and try again.`;$("missed").innerHTML=missed.map(w=>`<div class="question"><b>${w.word}</b><div class="muted">${w.definition}</div></div>`).join("")||"All correct—excellent work!"}
 $("startBtn").onclick=startQuiz;$("retryBtn").onclick=startQuiz;
-function showStudy(list){$("studyList").innerHTML=list.map(w=>`<div class="question"><div class="row between"><b>${w.n}. ${w.word}</b><button class="btn secondary" onclick="speak(${JSON.stringify(w.word).replace(/</g,"\\u003c")})">🔊 Hear</button></div><div class="muted">${w.pos} · ${w.definition}</div></div>`).join("")||"<p class='muted'>No matching words.</p>"}
+function showStudy(list) {
+  const studyList = $("studyList");
+
+  studyList.innerHTML = list.map(w => `
+    <div class="question">
+      <div class="row between">
+        <b>${w.n}. ${w.word}</b>
+        <button class="btn secondary" type="button" data-hear-word="${w.n}">🔊 Hear</button>
+      </div>
+      <div class="muted">${w.pos} · ${w.definition}</div>
+    </div>
+  `).join("") || "<p class='muted'>No matching words.</p>";
+
+  studyList.querySelectorAll("[data-hear-word]").forEach(button => {
+    button.addEventListener("click", () => {
+      const wordNumber = Number(button.dataset.hearWord);
+      const word = list.find(w => w.n === wordNumber);
+      if (word) speak(word.word);
+    });
+  });
+}
 $("studyBtn").onclick=()=>{$("quizPanel").classList.add("hidden");$("results").classList.add("hidden");$("studyPanel").classList.remove("hidden");$("search").value="";showStudy(levelWords())};$("closeStudy").onclick=()=>$("studyPanel").classList.add("hidden");$("search").oninput=()=>{let q=$("search").value.toLowerCase();showStudy(levelWords().filter(w=>(w.word+" "+w.definition+" "+w.pos).toLowerCase().includes(q)))};
 </script></body></html>
