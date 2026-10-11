@@ -3,14 +3,7 @@
 <title>Spelling Bee Practice</title>
 <style>
 :root{--navy:#142744;--blue:#315ee8;--gold:#f6c453;--ink:#172033;--muted:#65718a;--paper:#f5f7fb;--line:#e0e6f0;--green:#16845b;--red:#b42332}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);font-family:system-ui,-apple-system,sans-serif;color:var(--ink)}header{background:linear-gradient(135deg,#142744,#244e8c);color:white;padding:25px 18px 32px}.wrap{max-width:900px;margin:auto}h1{margin:0;font-size:clamp(25px,4vw,36px)}header p{color:#dce7ff;line-height:1.5}main{max-width:900px;margin:-15px auto 30px;padding:0 14px}.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:15px;box-shadow:0 10px 30px #182a480b}.muted{color:var(--muted);line-height:1.5;font-size:14px}.btn{border:0;border-radius:11px;padding:12px 15px;font-weight:750;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:#edf1f7;color:var(--ink)}.proceed-btn{background:#16845b;color:#fff;border:0;border-radius:11px;padding:12px 15px;font-weight:800;cursor:pointer}.proceed-btn:hover{background:#116747}.proceed-btn:focus-visible{outline:3px solid #f6c453;outline-offset:3px}input[type=file],input[type=text]{width:100%;padding:13px;border:1px solid var(--line);border-radius:11px;margin:10px 0;font:inherit}.hidden{display:none!important}.status{padding:12px;border-radius:11px;margin-top:12px;line-height:1.5}.good{background:#e7f8f0;color:#116747}.bad{background:#fff0f1;color:#9f2433}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}.level{border:1px solid var(--line);border-radius:11px;background:white;padding:12px 6px;cursor:pointer}.level.active{border-color:var(--blue);background:#f2f5ff}.level:disabled{cursor:not-allowed;background:#f1f3f7;color:#8b94a5;border-style:dashed}.level:disabled small{color:#9aa3b2}.level small{display:block;color:var(--muted);margin-top:4px}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.pill{background:#edf2ff;color:#284fc5;padding:6px 10px;border-radius:99px;font-size:12px;font-weight:800}.question{background:#f7f9ff;border:1px solid #e3eaff;border-radius:14px;padding:18px;margin:16px 0}.definition{font-size:21px;line-height:1.45;margin:8px 0}.answer{font-size:20px}footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
-.import-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
-.import-heading h2{margin:0}
-.disclosure-btn{flex:0 0 auto;width:40px;height:40px;border:1px solid var(--line);border-radius:10px;background:#edf1f7;color:var(--ink);font-size:24px;line-height:1;cursor:pointer;display:grid;place-items:center}
-.disclosure-btn:hover{background:#e2e9f5}
-# importPanelContent{min-width:0}
-#importPanelContent.collapsed{display:none}
-@media(max-width:520px){.grid{grid-template-columns:repeat(2,1fr)}.panel{padding:15px}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);font-family:system-ui,-apple-system,sans-serif;color:var(--ink)}header{background:linear-gradient(135deg,#142744,#244e8c);color:white;padding:25px 18px 32px}.wrap{max-width:900px;margin:auto}h1{margin:0;font-size:clamp(25px,4vw,36px)}header p{color:#dce7ff;line-height:1.5}main{max-width:900px;margin:-15px auto 30px;padding:0 14px}.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:15px;box-shadow:0 10px 30px #182a480b}.muted{color:var(--muted);line-height:1.5;font-size:14px}.btn{border:0;border-radius:11px;padding:12px 15px;font-weight:750;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:#edf1f7;color:var(--ink)}input[type=file],input[type=text]{width:100%;padding:13px;border:1px solid var(--line);border-radius:11px;margin:10px 0;font:inherit}.hidden{display:none!important}.status{padding:12px;border-radius:11px;margin-top:12px;line-height:1.5}.good{background:#e7f8f0;color:#116747}.bad{background:#fff0f1;color:#9f2433}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}.level{border:1px solid var(--line);border-radius:11px;background:white;padding:12px 6px;cursor:pointer}.level.active{border-color:var(--blue);background:#f2f5ff}.level:disabled{cursor:not-allowed;background:#f1f3f7;color:#8b94a5;border-style:dashed}.level:disabled small{color:#9aa3b2}.level small{display:block;color:var(--muted);margin-top:4px}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.pill{background:#edf2ff;color:#284fc5;padding:6px 10px;border-radius:99px;font-size:12px;font-weight:800}.question{background:#f7f9ff;border:1px solid #e3eaff;border-radius:14px;padding:18px;margin:16px 0}.definition{font-size:21px;line-height:1.45;margin:8px 0}.answer{font-size:20px}footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}@media(max-width:520px){.grid{grid-template-columns:repeat(2,1fr)}.panel{padding:15px}}
 
 #certificatePanel .certificate{border:8px double #d5a72d;border-radius:12px;padding:28px 22px;text-align:center;background:linear-gradient(135deg,#fffdf4,#ffffff);color:#17345c}
 #certificatePanel .cert-kicker{letter-spacing:3px;text-transform:uppercase;font-size:12px;font-weight:800;color:#8a6810}
@@ -28,23 +21,11 @@
 </style></head><body>
 <header><div class="wrap"><h1>🐝 Spelling Bee Practice</h1><p>Import your own 2026–2027 School Spelling Bee Study List PDF to unlock 10 levels of practice. Your PDF is checked and processed in this browser; it is not uploaded.</p></div></header>
 <main>
-<section class="panel" id="importPanel">
- <div class="import-heading">
-  <h2>Import the study-list PDF</h2>
-  <button class="disclosure-btn" id="toggleImportBtn" type="button" aria-expanded="true" aria-controls="importPanelContent" aria-label="Collapse PDF import panel" title="Collapse or expand PDF import">⌃</button>
- </div>
- <div id="importPanelContent">
-  <p class="muted">Choose the exact original PDF supplied for this practice app. The app checks its SHA-256 fingerprint before reading the words.</p>
-  <input id="pdfFile" type="file" accept="application/pdf">
-  <button class="btn primary" id="verifyBtn">Verify PDF and unlock</button>
-  <div id="status" class="status hidden" role="status"></div>
-  <p class="muted">Privacy: the selected file stays on your device. The app does not send it to a server. This browser-only check is a convenience gate, not strong security.</p>
- </div>
-</section>
+<section class="panel" id="importPanel"><h2>Import the study-list PDF</h2><p class="muted">Choose the exact original PDF supplied for this practice app. The app checks its SHA-256 fingerprint before reading the words.</p><input id="pdfFile" type="file" accept="application/pdf"><button class="btn primary" id="verifyBtn">Verify PDF and unlock</button><div id="status" class="status hidden" role="status"></div><p class="muted">Privacy: the selected file stays on your device. The app does not send it to a server. This browser-only check is a convenience gate, not strong security.</p></section>
 <div id="practice" class="hidden">
 <section class="panel"><div class="row between"><div><h2 id="levelTitle">Level 1 · Beginner</h2><p class="muted" id="levelInfo">Choose a level to practice.</p></div><span class="pill" id="levelBadge">LEVEL 1</span></div><div class="grid" id="levels"></div><p class="muted" id="unlockInfo">Complete each level with 10/10 to unlock the next level.</p><div class="row" style="margin-top:16px"><button class="btn primary" id="startBtn">Start 10-question quiz</button><button class="btn secondary" id="studyBtn">Study words</button></div></section>
 <section class="panel hidden" id="quizPanel"><div class="row between"><span class="pill" id="quizLevel"></span><span class="muted" id="qCount"></span></div><div style="height:7px;background:#e9edf5;border-radius:9px;margin:12px 0;overflow:hidden"><div id="progress" style="height:100%;background:#315ee8;width:0"></div></div><div class="question"><div class="muted">Spell the word described below</div><div class="definition" id="definition"></div><div class="muted" id="pos"></div></div><button class="btn secondary" id="hearBtn">🔊 Hear word</button><form id="answerForm"><input class="answer" id="answer" placeholder="Type the spelling…" autocomplete="off" autocapitalize="none" spellcheck="false" required><button class="btn primary" id="checkBtn">Check spelling</button><button class="btn secondary hidden" type="button" id="nextBtn">Next word →</button></form><div id="feedback" class="status hidden"></div><p class="muted" id="score"></p></section>
-<section class="panel hidden" id="results"><h2 id="resultTitle">Quiz complete</h2><p id="resultText" class="muted"></p><div id="missed"></div><div class="row" style="margin-top:12px"><button class="btn primary" id="retryBtn">Try level again</button><button class="btn proceed-btn hidden" id="proceedBtn" type="button">Proceed to newly unlocked level now →</button></div></section>
+<section class="panel hidden" id="results"><h2 id="resultTitle">Quiz complete</h2><p id="resultText" class="muted"></p><div id="missed"></div><button class="btn primary" id="retryBtn">Try level again</button></section>
 <section class="panel hidden" id="certificatePanel">
  <div class="no-print">
   <h2>🏆 Spelling Bee Champion Certificate</h2>
@@ -74,7 +55,7 @@
 <script>
 const EXPECTED_SHA256="8ebc528289acfdec7ba2ffd318270aa2e0e0c1a0aa883cdc27f0ce257957f6c5";
 if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-let words=[],level=1,questions=[],qi=0,correct=0,missed=[],answered=false,nextCountdownTimer=null;
+let words=[],level=1,questions=[],qi=0,correct=0,missed=[],answered=false;
 const PROGRESS_KEY="spellingBeeUnlockedLevel_v1";
 function readUnlockedLevel(){
  try {
@@ -91,99 +72,16 @@ async function extractPdf(file){
  if(!window.pdfjsLib)throw Error("The PDF reader library did not load. Check your internet connection and reload the page.");
  const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
  let lines=[];
- for(let p=1;p<=pdf.numPages;p++){
-  const page=await pdf.getPage(p);
-  const content=await page.getTextContent();
-  let items=content.items.filter(x=>x.str&&x.str.trim());
-  items.sort((a,b)=>Math.abs(b.transform[5]-a.transform[5])>2?b.transform[5]-a.transform[5]:a.transform[4]-b.transform[4]);
-  let rowY=null,row=[];
-  for(const it of items){
-   let y=Math.round(it.transform[5]);
-   if(rowY!==null&&Math.abs(y-rowY)>2){lines.push(row.join(" ").replace(/\s+/g," ").trim());row=[]}
-   row.push(it.str);rowY=y;
-  }
-  if(row.length)lines.push(row.join(" ").replace(/\s+/g," ").trim());
- }
+ for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p);const content=await page.getTextContent();let items=content.items.filter(x=>x.str&&x.str.trim());items.sort((a,b)=>Math.abs(b.transform[5]-a.transform[5])>2?b.transform[5]-a.transform[5]:a.transform[4]-b.transform[4]);let rowY=null,row=[];for(const it of items){let y=Math.round(it.transform[5]);if(rowY!==null&&Math.abs(y-rowY)>2){lines.push(row.join(" ").replace(/\s+/g," ").trim());row=[]}row.push(it.str);rowY=y}if(row.length)lines.push(row.join(" ").replace(/\s+/g," ").trim())}
  const text=lines.join("\n");
- // Entry numbers can appear on the same extracted line as the previous table row.
- const starts=[...text.matchAll(/\b(\d{1,3})\s*\.\s+/g)];
+ // Each numbered table row starts with an entry number. The definition may wrap onto following rows.
+ const starts=[...text.matchAll(/(?:^|\n)\s*(\d{1,3})\.\s+/g)];
  let out=[];
- for(let i=0;i<starts.length;i++){
-  const n=+starts[i][1];
-  if(n<1||n>450)continue;
-  const begin=starts[i].index;
-  const end=i+1<starts.length?starts[i+1].index:text.length;
-  let block=text.slice(begin,end).replace(/^\s*\d{1,3}\s*\.\s+/,"").replace(/\s+/g," ").trim();
-
-  // Remove page furniture and explanatory footnotes that may follow the last entry on a page.
-  block=block
-   .replace(/This is copyrighted material.*$/i,"")
-   .replace(/Download the Word Club.*$/i,"")
-   .replace(/Create a free account.*$/i,"")
-   .replace(/Official Dictionary.*$/i,"")
-   .replace(/\s+\*(?:British|American|US|U\.S\.) spelling\b.*$/i,"")
-   .replace(/\s+\*?Copyrighted material.*$/i,"")
-   .trim();
-
-  const posMatch=block.match(/\b(plural noun|geographical entry|adjective|adverb|preposition|interjection|noun|verb)\b/i);
-  if(!posMatch)continue;
-  const pos=posMatch[0];
-  const at=posMatch.index;
-  let wordColumn=block.slice(0,at).trim();
-  const definitionStart=block.slice(at+pos.length).trim().replace(/^\s*[-—:]\s*/,"");
-  // Alternative spellings normally belong to the word column, but PDF.js can
-  // insert them into the definition column when it reads the table out of order.
-  let word=wordColumn.replace(/\s+\bOR\b\s+.*$/i,"").replace(/\*+/g,"").trim();
-  let answers=[word];
-  const wordAlt=wordColumn.match(/\s+\bOR\b\s+([A-Za-zÀ-ÿñÑ'’]+)\*?\s*$/i);
-  if(wordAlt)answers.push(wordAlt[1].trim().replace(/\*+$/,""));
-
-  let definition=definitionStart;
-  // Only treat a word following OR as an alternative if it closely matches
-  // the actual entry word. This avoids mistaking ordinary definition text
-  // such as “the OR source of heat” for an alternative spelling.
-  function spellingDistance(a,b){
-   a=a.toLocaleLowerCase(); b=b.toLocaleLowerCase();
-   const row=Array.from({length:b.length+1},(_,i)=>i);
-   for(let i=1;i<=a.length;i++){
-    let prev=row[0]; row[0]=i;
-    for(let j=1;j<=b.length;j++){
-     const old=row[j];
-     row[j]=Math.min(row[j]+1,row[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));
-     prev=old;
-    }
-   }
-   return row[b.length];
-  }
-  const orMatches=[...definition.matchAll(/\bOR\s+([A-Za-zÀ-ÿñÑ'’]+)\*?/gi)];
-  for(const match of orMatches){
-   const candidate=match[1].replace(/\*+$/,"" );
-   const normalizedWord=word.toLocaleLowerCase();
-   const normalizedCandidate=candidate.toLocaleLowerCase();
-   if(candidate && normalizedCandidate!==normalizedWord &&
-      Math.abs(candidate.length-word.length)<=2 &&
-      spellingDistance(word,candidate)<=2){
-    answers.push(candidate);
-    definition=definition.slice(0,match.index)+definition.slice(match.index).replace(/^\bOR\s+[A-Za-zÀ-ÿñÑ'’]+\*?/i,"");
-    break;
-   }
-  }
-  // If the alternative spelling was appended at the very end of the definition,
-  // the matching logic above removes only that alternative, leaving the definition intact.
-  // Strip footnote markers accidentally carried over from the next page or footer.
-  definition=definition
-   .replace(/\s+\*(?:British|American|US|U\.S\.) spelling\b.*$/i,"")
-   .replace(/\s+This is copyrighted material.*$/i,"")
-   .replace(/\s+Download the Word Club.*$/i,"")
-   .replace(/\s+Create a free account.*$/i,"")
-   .trim()
-   .replace(/\*+$/,"")
-   .trim();
-
-  answers=[...new Set(answers.map(a=>a.trim()).filter(Boolean))];
-  if(word&&definition&&/^[A-Za-zÀ-ÿñÑ'’ -]+$/.test(word)){
-   out.push({n,word,pos,definition,answers});
-  }
+ for(let i=0;i<starts.length;i++){const n=+starts[i][1];if(n<1||n>450)continue;const begin=starts[i].index+(text.slice(starts[i].index).startsWith("\n")?1:0);const end=i+1<starts.length?starts[i+1].index:text.length;let block=text.slice(begin,end).replace(/^\s*\d{1,3}\.\s+/,"").replace(/\s+/g," ").trim();
+ block=block.replace(/This is copyrighted material.*$/i,"").replace(/Download the Word Club.*$/i,"").replace(/Create a free account.*$/i,"").replace(/Official Dictionary.*$/i,"").trim();
+ const posMatch=block.match(/\b(plural noun|geographical entry|adjective|adverb|preposition|interjection|noun|verb)\b/i);if(!posMatch)continue;
+ const pos=posMatch[0];const at=posMatch.index;const word=block.slice(0,at).trim().replace(/\s+(OR|or)\s+.*$/,"").replace(/\*+/g,"").trim();let definition=block.slice(at+pos.length).trim().replace(/^\s*[-—:]\s*/,"");
+ if(word&&definition&&/^[A-Za-zÀ-ÿñÑ'’ -]+$/.test(word))out.push({n,word,pos,definition});
  }
  const unique=[...new Map(out.map(w=>[w.n,w])).values()].sort((a,b)=>a.n-b.n);
  if(unique.length<400)throw Error("The PDF was recognized, but the browser could only extract "+unique.length+" entries. This PDF layout needs a parser adjustment before practice can start.");
@@ -207,17 +105,20 @@ function selectLevel(n){
  $("levelInfo").textContent=`Words ${(level-1)*45+1}–${level*45}, ordered by the original study-list sequence.`;
 }
 function levelWords(){return words.filter(w=>w.n>=(level-1)*45+1&&w.n<=level*45)}
-function setImportCollapsed(collapsed){
- const content=$("importPanelContent");
- const button=$("toggleImportBtn");
- content.classList.toggle("collapsed",collapsed);
- button.textContent=collapsed?"⌄":"⌃";
- button.setAttribute("aria-expanded",String(!collapsed));
- button.setAttribute("aria-label",collapsed?"Expand PDF import panel":"Collapse PDF import panel");
-}
-$("toggleImportBtn").onclick=()=>setImportCollapsed(!$("importPanelContent").classList.contains("collapsed"));
-$("verifyBtn").onclick=async()=>{const file=$("pdfFile").files[0];if(!file){status("Please choose the original study-list PDF first.",false);return} $("verifyBtn").disabled=true;$("verifyBtn").textContent="Checking PDF…";try{const hash=await sha256(file);if(hash!==EXPECTED_SHA256)throw Error("This is not the exact PDF configured for this app. Please select the original file.");words=await extractPdf(file);$("practice").classList.remove("hidden");status(`PDF verified. ${words.length} words were read locally. Practice is unlocked!`,true);selectLevel(1);setImportCollapsed(true)}catch(e){status(e.message||"Could not read this PDF.",false)}finally{$("verifyBtn").disabled=false;$("verifyBtn").textContent="Verify PDF and unlock"}};
+$("verifyBtn").onclick=async()=>{const file=$("pdfFile").files[0];if(!file){status("Please choose the original study-list PDF first.",false);return} $("verifyBtn").disabled=true;$("verifyBtn").textContent="Checking PDF…";try{const hash=await sha256(file);if(hash!==EXPECTED_SHA256)throw Error("This is not the exact PDF configured for this app. Please select the original file.");words=await extractPdf(file);$("practice").classList.remove("hidden");status(`PDF verified. ${words.length} words were read locally. Practice is unlocked!`,true);selectLevel(1)}catch(e){status(e.message||"Could not read this PDF.",false)}finally{$("verifyBtn").disabled=false;$("verifyBtn").textContent="Verify PDF and unlock"}};
 function speak(s){if(!("speechSynthesis"in window)){alert("Audio pronunciation is unavailable in this browser.");return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(s);u.lang="en-US";u.rate=.8;speechSynthesis.speak(u)}
+// The uploaded Britain's Got Talent buzzer plays on wrong answers.
+const wrongAnswerBuzzer = new Audio("britains-got-talent-buzzer.mp3");
+wrongAnswerBuzzer.preload = "auto";
+function playWrongAnswerBuzzer(){
+  try {
+    wrongAnswerBuzzer.pause();
+    wrongAnswerBuzzer.currentTime = 0;
+    const playback = wrongAnswerBuzzer.play();
+    if (playback && typeof playback.catch === "function") playback.catch(()=>{});
+  } catch (_) {}
+}
+
 // Reward correct answers with a short coin-like sound, then spell the word aloud.
 async function playCoinReward(){
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -281,25 +182,10 @@ async function celebrateSpelling(word){
   speakSpelling(word);
 }
 function startQuiz(){questions=levelWords().slice().sort(()=>Math.random()-.5).slice(0,10);qi=0;correct=0;missed=[];$("results").classList.add("hidden");$("studyPanel").classList.add("hidden");$("quizPanel").classList.remove("hidden");$("quizLevel").textContent="LEVEL "+level;showQ()}
-function showQ(){if(nextCountdownTimer!==null){clearInterval(nextCountdownTimer);nextCountdownTimer=null}if(qi>=questions.length){finish();return}answered=false;let w=questions[qi];$("qCount").textContent=`Question ${qi+1} of 10`;$("progress").style.width=(qi/10*100)+"%";$("definition").textContent=w.definition;$("pos").textContent=`${w.pos} · Study-list word #${w.n}`;$("answer").value="";$("answer").disabled=false;$("checkBtn").classList.remove("hidden");$("nextBtn").classList.add("hidden");$("feedback").classList.add("hidden");$("score").textContent=`Score: ${correct} correct`; }
-function startNextWordCountdown(){
- if(nextCountdownTimer!==null)clearInterval(nextCountdownTimer);
- let seconds=5;
- const button=$("nextBtn");
- button.textContent=`Next word in ${seconds}…`;
- nextCountdownTimer=setInterval(()=>{
-  seconds--;
-  if(seconds>0){button.textContent=`Next word in ${seconds}…`;return;}
-  clearInterval(nextCountdownTimer);
-  nextCountdownTimer=null;
-  button.textContent="Next word →";
-  button.click();
- },1000);
-}
-$("answerForm").onsubmit=e=>{e.preventDefault();if(answered)return;answered=true;let w=questions[qi];const normalizeSpelling=value=>value.trim().toLocaleLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[’‘]/g,"'").replace(/[\s\p{P}]/gu,"");let submitted=normalizeSpelling($("answer").value),accepted=(w.answers||[w.word]).map(normalizeSpelling),ok=accepted.includes(submitted);if(ok){correct++;celebrateSpelling(w.word)}else missed.push(w);$("answer").disabled=true;$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("progress").style.width=((qi+1)/10*100)+"%";$("feedback").className="status "+(ok?"good":"bad");$("feedback").textContent=ok?"Correct! "+w.word:"Correct spelling: "+w.word;$("score").textContent=`Score: ${correct} correct`;startNextWordCountdown()};
-$("nextBtn").onclick=()=>{if(nextCountdownTimer!==null){clearInterval(nextCountdownTimer);nextCountdownTimer=null}$("nextBtn").textContent="Next word →";qi++;showQ()};$("hearBtn").onclick=()=>speak(questions[qi]?.word||"");function finish(){
+function showQ(){if(qi>=questions.length){finish();return}answered=false;let w=questions[qi];$("qCount").textContent=`Question ${qi+1} of 10`;$("progress").style.width=(qi/10*100)+"%";$("definition").textContent=w.definition;$("pos").textContent=`${w.pos} · Study-list word #${w.n}`;$("answer").value="";$("answer").disabled=false;$("checkBtn").classList.remove("hidden");$("nextBtn").classList.add("hidden");$("feedback").classList.add("hidden");$("score").textContent=`Score: ${correct} correct`; }
+$("answerForm").onsubmit=e=>{e.preventDefault();if(answered)return;answered=true;let w=questions[qi],ok=$("answer").value.trim().toLowerCase()===w.word.trim().toLowerCase();if(ok){correct++;celebrateSpelling(w.word)}else{missed.push(w);playWrongAnswerBuzzer()}$("answer").disabled=true;$("checkBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("progress").style.width=((qi+1)/10*100)+"%";$("feedback").className="status "+(ok?"good":"bad");$("feedback").textContent=ok?"Correct! "+w.word:"Correct spelling: "+w.word;$("score").textContent=`Score: ${correct} correct`};
+$("nextBtn").onclick=()=>{qi++;showQ()};$("hearBtn").onclick=()=>speak(questions[qi]?.word||"");function finish(){
  $("quizPanel").classList.add("hidden");$("results").classList.remove("hidden");
- $("proceedBtn").classList.add("hidden");
  $("certificatePanel").classList.add("hidden");
  const perfect=correct===10;
  let unlockedNext=false;
@@ -323,17 +209,8 @@ $("nextBtn").onclick=()=>{if(nextCountdownTimer!==null){clearInterval(nextCountd
  if(!allComplete)result+="Review these words and try again.";
  $("resultText").textContent=result;
  $("missed").innerHTML=missed.map(w=>`<div class="question"><b>${w.word}</b><div class="muted">${w.definition}</div></div>`).join("")||"All correct—excellent work!";
- if(unlockedNext){
-  $("proceedBtn").classList.remove("hidden");
-  $("proceedBtn").textContent=`Proceed to Level ${maxUnlockedLevel} — ${names[maxUnlockedLevel-1]} →`;
- }
 }
 $("startBtn").onclick=startQuiz;$("retryBtn").onclick=startQuiz;
-$("proceedBtn").onclick=()=>{
- const nextLevel=maxUnlockedLevel;
- selectLevel(nextLevel);
- startQuiz();
-};
 function updateCertificateName(){
  const name=$("studentName").value.trim()||"Spelling Bee Champion";
  $("certificateName").textContent=name;
@@ -356,7 +233,7 @@ function showStudy(list) {
   studyList.innerHTML = list.map(w => `
     <div class="question">
       <div class="row between">
-        <b>${w.n}. ${w.word}${(w.answers||[]).length>1?` (also ${(w.answers||[]).filter(a=>a.toLowerCase()!==w.word.toLowerCase()).join(", ")})`:""}</b>
+        <b>${w.n}. ${w.word}</b>
         <button class="btn secondary" type="button" data-hear-word="${w.n}">🔊 Hear</button>
       </div>
       <div class="muted">${w.pos} · ${w.definition}</div>
